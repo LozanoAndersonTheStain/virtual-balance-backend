@@ -49,9 +49,14 @@ Write-Host "`n"
 
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "NOTA:" -ForegroundColor Yellow
-Write-Host "- Copia el 'token' de la recarga" -ForegroundColor White
-Write-Host "- Usa ese token para confirmar el pago:`n" -ForegroundColor White
+Write-Host "- Copia el 'token' y 'sessionId' de la recarga" -ForegroundColor White
+Write-Host "- Confirmar como CLIENTE:" -ForegroundColor White
 Write-Host '  curl -X POST http://localhost:8000/api/transactions/confirm \' -ForegroundColor Gray
+Write-Host '    -H "Content-Type: application/json" \' -ForegroundColor Gray
+Write-Host '    -H "X-API-Key: dev_api_key_12345" \' -ForegroundColor Gray
+Write-Host '    -d ''{"token": "tok_XXXXXXXX", "sessionId": "sess_XXXXXXXX"}''' -ForegroundColor Gray
+Write-Host "`n- Confirmar como WEBHOOK (pasarela externa):" -ForegroundColor White
+Write-Host '  curl -X POST http://localhost:8000/api/notifications/payment \' -ForegroundColor Gray
 Write-Host '    -H "Content-Type: application/json" \' -ForegroundColor Gray
 Write-Host '    -H "X-API-Key: dev_api_key_12345" \' -ForegroundColor Gray
 Write-Host '    -d ''{"token": "tok_XXXXXXXX", "sessionId": "sess_XXXXXXXX"}''' -ForegroundColor Gray
