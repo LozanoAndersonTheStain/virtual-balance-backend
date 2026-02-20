@@ -268,7 +268,7 @@ Si el webhook falla, se recomienda que las pasarelas implementen:
 ```bash
 # Endpoint de desarrollo
 BASE_URL="http://localhost:8000"
-API_KEY="dev_api_key_12345"
+API_KEY="3d1ae36128db9f079fd5f0b4af05ba16ee7bfbea94343623ef2055cf2272ccfe"
 
 # Test del webhook
 curl -X POST "$BASE_URL/api/notifications/payment" \

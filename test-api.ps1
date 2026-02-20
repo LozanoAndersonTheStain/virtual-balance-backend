@@ -1,7 +1,7 @@
 # Script de prueba de API - Virtual Balance
 # Ejecutar: .\test-api.ps1
 
-$API_KEY = "dev_api_key_12345"
+$API_KEY = "3d1ae36128db9f079fd5f0b4af05ba16ee7bfbea94343623ef2055cf2272ccfe"
 $BASE_URL = "http://localhost:8000/api"
 
 Write-Host "`n========================================" -ForegroundColor Cyan
@@ -53,11 +53,11 @@ Write-Host "- Copia el 'token' y 'sessionId' de la recarga" -ForegroundColor Whi
 Write-Host "- Confirmar como CLIENTE:" -ForegroundColor White
 Write-Host '  curl -X POST http://localhost:8000/api/transactions/confirm \' -ForegroundColor Gray
 Write-Host '    -H "Content-Type: application/json" \' -ForegroundColor Gray
-Write-Host '    -H "X-API-Key: dev_api_key_12345" \' -ForegroundColor Gray
+Write-Host '    -H "X-API-Key: 3d1ae36128db9f079fd5f0b4af05ba16ee7bfbea94343623ef2055cf2272ccfe" \' -ForegroundColor Gray
 Write-Host '    -d ''{"token": "tok_XXXXXXXX", "sessionId": "sess_XXXXXXXX"}''' -ForegroundColor Gray
 Write-Host "`n- Confirmar como WEBHOOK (pasarela externa):" -ForegroundColor White
 Write-Host '  curl -X POST http://localhost:8000/api/notifications/payment \' -ForegroundColor Gray
 Write-Host '    -H "Content-Type: application/json" \' -ForegroundColor Gray
-Write-Host '    -H "X-API-Key: dev_api_key_12345" \' -ForegroundColor Gray
+Write-Host '    -H "X-API-Key: 3d1ae36128db9f079fd5f0b4af05ba16ee7bfbea94343623ef2055cf2272ccfe" \' -ForegroundColor Gray
 Write-Host '    -d ''{"token": "tok_XXXXXXXX", "sessionId": "sess_XXXXXXXX"}''' -ForegroundColor Gray
 Write-Host "========================================`n" -ForegroundColor Cyan

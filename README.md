@@ -230,7 +230,7 @@ cp .env.example .env
 # DB_NAME=virtual_balance
 # DB_USER=root
 # DB_PASS=tu_password
-# API_KEY=dev_api_key_12345
+# API_KEY=3d1ae36128db9f079fd5f0b4af05ba16ee7bfbea94343623ef2055cf2272ccfe
 
 # 5. Crear base de datos
 mysql -u root -p < database/migrations/init_database.sql
@@ -270,7 +270,7 @@ Interfaz web con formularios para probar todos los endpoints.
 Todas las rutas (excepto `/api/health`) requieren el header:
 
 ```http
-X-API-Key: dev_api_key_12345
+X-API-Key: 3d1ae36128db9f079fd5f0b4af05ba16ee7bfbea94343623ef2055cf2272ccfe
 ```
 
 ### Endpoints Disponibles
@@ -310,7 +310,7 @@ curl -X GET http://localhost:8000/api/health
 ```bash
 curl -X POST http://localhost:8000/api/users/register \
   -H "Content-Type: application/json" \
-  -H "X-API-Key: dev_api_key_12345" \
+  -H "X-API-Key: 3d1ae36128db9f079fd5f0b4af05ba16ee7bfbea94343623ef2055cf2272ccfe" \
   -d '{
     "document": "1234567890",
     "name": "Juan Pérez",
@@ -340,7 +340,7 @@ curl -X POST http://localhost:8000/api/users/register \
 
 ```bash
 curl -X GET http://localhost:8000/api/users/1234567890/balance \
-  -H "X-API-Key: dev_api_key_12345"
+  -H "X-API-Key: 3d1ae36128db9f079fd5f0b4af05ba16ee7bfbea94343623ef2055cf2272ccfe"
 ```
 
 **Respuesta 200 OK:**
@@ -364,7 +364,7 @@ curl -X GET http://localhost:8000/api/users/1234567890/balance \
 ```bash
 curl -X POST http://localhost:8000/api/transactions/recharge \
   -H "Content-Type: application/json" \
-  -H "X-API-Key: dev_api_key_12345" \
+  -H "X-API-Key: 3d1ae36128db9f079fd5f0b4af05ba16ee7bfbea94343623ef2055cf2272ccfe" \
   -d '{
     "document": "1234567890",
     "phone": "3001234567",
@@ -392,7 +392,7 @@ curl -X POST http://localhost:8000/api/transactions/recharge \
 ```bash
 curl -X POST http://localhost:8000/api/transactions/confirm \
   -H "Content-Type: application/json" \
-  -H "X-API-Key: dev_api_key_12345" \
+  -H "X-API-Key: 3d1ae36128db9f079fd5f0b4af05ba16ee7bfbea94343623ef2055cf2272ccfe" \
   -d '{
     "token": "tok_507f1f77bcf86cd799439011",
     "sessionId": "sess_507f191e810c19729de860ea"
@@ -433,7 +433,7 @@ curl -X POST http://localhost:8000/api/transactions/confirm \
 ```bash
 curl -X POST http://localhost:8000/api/notifications/payment \
   -H "Content-Type: application/json" \
-  -H "X-API-Key: dev_api_key_12345" \
+  -H "X-API-Key: 3d1ae36128db9f079fd5f0b4af05ba16ee7bfbea94343623ef2055cf2272ccfe" \
   -d '{
     "token": "tok_507f1f77bcf86cd799439011",
     "sessionId": "sess_507f191e810c19729de860ea"
@@ -476,7 +476,7 @@ curl -X POST http://localhost:8000/api/notifications/payment \
 ```bash
 curl -X POST http://localhost:8000/api/transactions/payment \
   -H "Content-Type: application/json" \
-  -H "X-API-Key: dev_api_key_12345" \
+  -H "X-API-Key: 3d1ae36128db9f079fd5f0b4af05ba16ee7bfbea94343623ef2055cf2272ccfe" \
   -d '{
     "document": "1234567890",
     "amount": 10000

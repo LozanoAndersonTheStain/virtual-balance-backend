@@ -2,7 +2,7 @@
 # Script de prueba de API - Virtual Balance
 # Ejecutar: chmod +x test-api.sh && ./test-api.sh
 
-API_KEY="dev_api_key_12345"
+API_KEY="3d1ae36128db9f079fd5f0b4af05ba16ee7bfbea94343623ef2055cf2272ccfe"
 BASE_URL="http://localhost:8000/api"
 
 echo -e "\n========================================"
@@ -51,6 +51,6 @@ echo "- Usa ese token para confirmar el pago:"
 echo ""
 echo '  curl -X POST http://localhost:8000/api/transactions/confirm \'
 echo '    -H "Content-Type: application/json" \'
-echo '    -H "X-API-Key: dev_api_key_12345" \'
+echo '    -H "X-API-Key: 3d1ae36128db9f079fd5f0b4af05ba16ee7bfbea94343623ef2055cf2272ccfe" \'
 echo '    -d '"'"'{"token": "tok_XXXXXXXX", "sessionId": "sess_XXXXXXXX"}'"'"''
 echo -e "========================================\n"

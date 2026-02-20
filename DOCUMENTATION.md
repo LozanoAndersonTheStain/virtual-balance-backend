@@ -846,7 +846,7 @@ public function process(
         $apiKey = $params['api_key'] ?? '';
     }
     
-    $validApiKey = $_ENV['API_KEY'] ?? 'dev_api_key_12345';
+    $validApiKey = $_ENV['API_KEY'] ?? '3d1ae36128db9f079fd5f0b4af05ba16ee7bfbea94343623ef2055cf2272ccfe';
     
     if ($apiKey !== $validApiKey) {
         $response = new \Slim\Psr7\Response();
