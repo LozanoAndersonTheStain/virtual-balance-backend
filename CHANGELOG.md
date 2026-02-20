@@ -5,6 +5,74 @@ Todos los cambios notables de este proyecto están documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.1.0] - 2026-02-20
+
+### ✨ Nuevas Características
+
+#### Sistema de Notificaciones de Pago (Webhooks)
+
+- ✅ **Nuevo Endpoint:** `POST /api/notifications/payment` - Webhook dedicado para pasarelas externas
+  - Diseñado específicamente para recibir confirmaciones de pago desde PSE, Nequi, Bancolombia, etc.
+  - Logging detallado con User-Agent para auditoría y trazabilidad
+  - Procesamiento en tiempo real de confirmaciones
+  - Actualización automática de saldos al confirmar
+  
+- ✅ **Controller Method:** `TransactionController::notifyPayment()`
+  - Recibe token + sessionId desde pasarela externa
+  - Valida autenticación mediante API Key
+  - Registra origen de la notificación (User-Agent)
+  - Procesa confirmación usando `ConfirmPaymentUseCase`
+  - Retorna respuesta específica para webhooks
+  
+- ✅ **Rutas API:** Nueva sección `/api/notifications/*` para webhooks
+  - Separación conceptual entre confirmaciones de cliente y webhooks
+  - Mantiene compatibilidad con `/api/transactions/confirm` existente
+
+### 📚 Documentación
+
+- ✅ **WEBHOOKS.md** - Documentación completa de integración de webhooks
+  - Especificación técnica del endpoint
+  - Ejemplos de request/response
+  - Diagramas de flujo de integración
+  - Guía de configuración para pasarelas
+  - Políticas de retry recomendadas
+  - Consideraciones de seguridad
+  - Diferencias entre `/confirm` y `/notifications/payment`
+
+- ✅ **README.md** - Actualizado con nuevo endpoint
+  - Tabla de endpoints incluye `/api/notifications/payment`
+  - Nuevo ejemplo de uso (#6 Webhook de Notificaciones)
+  - Comparación entre endpoints de confirmación
+  - Referencia a documentación de webhooks
+
+- ✅ **VALIDACION_REQUERIMIENTOS.md** - Sistema de notificaciones documentado
+  - Nueva sección "6. Sistema de Notificaciones de Pago"
+  - Cumplimiento explícito del requerimiento de webhooks
+  - Especificación técnica completa
+  - Tabla de endpoints actualizada (7 endpoints totales)
+
+- ✅ **test-api.ps1** - Script de pruebas actualizado
+  - Incluye información de ambos endpoints de confirmación
+  - Guía de uso para cliente vs webhook
+
+### 🔧 Mejoras Técnicas
+
+- ✅ Separación de responsabilidades entre confirmación de cliente y webhook
+- ✅ Auditoría mejorada con registro de User-Agent
+- ✅ Mensajes de respuesta específicos para contexto de webhooks
+- ✅ Logging diferenciado para notificaciones vs confirmaciones
+
+### 📊 Estadísticas
+
+- **Total Endpoints:** 7 (anteriormente 6)
+- **Nueva Documentación:** WEBHOOKS.md
+- **Requerimientos Funcionales:** 6/6 ✅ (100% completo)
+- **Líneas de Código Agregadas:** ~120 líneas
+- **Archivos Modificados:** 5
+- **Archivos Nuevos:** 1 (WEBHOOKS.md)
+
+---
+
 ## [1.0.0] - 2026-02-20
 
 ### 🎉 Lanzamiento Inicial
