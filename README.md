@@ -527,199 +527,144 @@ Abre `http://localhost:8000/test.html` para acceder a la interfaz web de testing
 .\test-api.ps1
 ```
 
-## 🚀 Deploy en Railway.app
+## 🚀 Deploy
 
-Railway.app soporta PHP nativamente y es la forma más fácil de desplegar este proyecto.
+Este proyecto se puede desplegar usando:
 
-### 📋 Pre-requisitos
+🌐 **Backend PHP**: [Render.com](https://render.com)  
+🗄️ **Base de Datos**: [Clever Cloud](https://www.clever-cloud.com) - MySQL  
 
-- Cuenta en [Railway.app](https://railway.app) (gratis)
-- Node.js instalado (para Railway CLI)
-- Git configurado
-- Proyecto pusheado a GitHub
+> **⚠️ Nota:** Railway.app ahora requiere tarjeta de crédito para uso continuo
 
-### 🎯 Guía Paso a Paso
+### 📖 Guía Completa de Deploy
 
-#### 1️⃣ Instalar Railway CLI
+**👉 Ver la guía paso a paso detallada:** **[DEPLOY.md](DEPLOY.md)**
 
-```bash
-npm install -g @railway/cli
-```
+### ⚡ Inicio Rápido (Resumen)
 
-#### 2️⃣ Login en Railway
+#### 1️⃣ Clever Cloud (MySQL)
 
 ```bash
-railway login
+# 1. Crear cuenta en https://www.clever-cloud.com
+# 2. Crear addon MySQL: virtual-balance-db
+# 3. Obtener credenciales de conexión
+# 4. Ejecutar migraciones vía phpMyAdmin o MySQL
 ```
 
-Esto abrirá tu navegador para autenticarte.
+[**📚 Guía detallada de Clever Cloud**](DEPLOY.md#-parte-1-configurar-clever-cloud-mysql)
 
-#### 3️⃣ Inicializar Proyecto
-
-En la raíz del proyecto:
+#### 2️⃣ Render.com (Backend PHP)
 
 ```bash
-cd virtual-balance-backend
-railway init
+# 1. Crear cuenta en https://render.com
+# 2. New + → Blueprint
+# 3. Conectar repositorio GitHub
+# 4. Configurar variables de entorno (credenciales de Clever Cloud)
+# 5. Apply → Esperar deploy (~5 min)
 ```
 
-Selecciona:
-- **Create a new project** (o selecciona uno existente)
-- Dale un nombre: `virtual-balance-backend`
+[**📚 Guía detallada de Render.com**](DEPLOY.md#-parte-2-configurar-rendercom-backend-php)
 
-#### 4️⃣ Agregar Base de Datos MySQL
+#### 3️⃣ Verificar Deploy
 
 ```bash
-railway add
-```
-
-Selecciona **MySQL** de la lista.
-
-Railway creará automáticamente:
-- ✅ Instancia MySQL
-- ✅ Variables de entorno (`DATABASE_URL`, `MYSQL_URL`)
-- ✅ Credenciales automáticas
-
-#### 5️⃣ Configurar Variables de Entorno
-
-**Opción A: Por CLI**
-```bash
-# API Key (genera una segura)
-railway variables set API_KEY=$(openssl rand -hex 32)
-
-# Ambiente
-railway variables set APP_ENV=production
-railway variables set APP_DEBUG=false
-railway variables set PAYMENT_SUCCESS_RATE=1.0
-```
-
-**Opción B: Por Dashboard**
-1. Ve a [railway.app/dashboard](https://railway.app/dashboard)
-2. Selecciona tu proyecto
-3. Click en **Variables**
-4. Agrega las variables:
-
-```env
-API_KEY=<genera-con-openssl-rand-hex-32>
-APP_ENV=production
-APP_DEBUG=false
-PAYMENT_SUCCESS_RATE=1.0
-```
-
-**⚠️ Nota:** Railway ya configura automáticamente las variables de MySQL desde el servicio que agregaste.
-
-#### 6️⃣ Deploy
-
-**Opción A: Deploy Directo**
-```bash
-railway up
-```
-
-**Opción B: Conectar con GitHub (Recomendado)**
-1. Push tu código a GitHub:
-   ```bash
-   git add .
-   git commit -m "chore: configuración para Railway"
-   git push origin main
-   ```
-
-2. En el dashboard de Railway:
-   - Click en tu proyecto
-   - **Settings** → **Service** → **Source**
-   - Conecta tu repositorio de GitHub
-   - Selecciona la rama `main`
-
-3. Railway hará deploy automático en cada push.
-
-#### 7️⃣ Ejecutar Migraciones de Base de Datos
-
-**Opción A: Usando Railway CLI**
-```bash
-# Ver las credenciales de MySQL
-railway variables
-
-# Conectarse a MySQL
-railway run mysql -h <MYSQL_HOST> -u <MYSQL_USER> -p<MYSQL_PASSWORD> <MYSQL_DATABASE>
-
-# Ejecutar migrations
-source database/migrations/init_database.sql;
-```
-
-**Opción B: Desde phpMyAdmin o cliente MySQL**
-```bash
-# Obtener URL de conexión
-railway variables get MYSQL_URL
-
-# Conectarte con tu cliente favorito y ejecutar:
-# database/migrations/init_database.sql
-```
-
-#### 8️⃣ Verificar Deploy
-
-```bash
-# Obtener la URL del proyecto
-railway domain
-
-# O verla en el dashboard
-```
-
-Prueba tu API:
-```bash
-curl -X GET https://tu-dominio.railway.app/api/health \
+# Probar health check
+curl https://tu-servicio.onrender.com/api/health \
   -H "X-API-Key: tu_api_key"
+
+# Respuesta esperada:
+# {"status":"success","message":"API is running","database":"connected"}
 ```
 
-### 🔧 Configuración Incluida
+### 🔧 Archivos de Configuración Incluidos
 
-El archivo `railway.json` ya está configurado con:
-- ✅ **Builder:** Nixpacks (detecta PHP automáticamente)
-- ✅ **Build Command:** `composer install --no-dev --optimize-autoloader`
-- ✅ **Start Command:** `php -S 0.0.0.0:$PORT -t public`
-- ✅ **Restart Policy:** ON_FAILURE con 10 reintentos
+- ✅ **`Dockerfile`** - Imagen Docker con PHP 8.2 + Apache
+- ✅ **`render.yaml`** - Blueprint de Render.com (auto-deploy)
+- ✅ **`.dockerignore`** - Optimización de build
+- ✅ **`DEPLOY.md`** - Guía completa paso a paso
 
-### 📊 Monitoreo
+### ⚠️ Consideraciones del Deployment
 
-En el dashboard de Railway puedes ver:
-- 📈 Logs en tiempo real
-- 💾 Uso de recursos (CPU, RAM)
-- 🌐 Métricas de red
-- 🔄 Estado de deployments
+**Render.com:**
+- ⚠️ El servicio se duerme después de 15 min sin actividad (plan básico)
+- 🔄 Primera request tarda ~30 seg al despertar
+- ✅ HTTPS automático incluido
+- ✅ Deploy automático con git push
 
-### 🎨 Dominio Personalizado (Opcional)
+**Clever Cloud MySQL:**
+- 256 MB de RAM (plan DEV)
+- ~100 MB de storage
+- 5 conexiones simultáneas
+- phpMyAdmin incluido
 
-1. En Railway dashboard → **Settings** → **Domains**
-2. Click **Generate Domain** (obtienes un subdominio gratis)
-3. O agrega tu propio dominio custom
+### 🎯 Deploy Automático con GitHub
 
-### Variables de Entorno Necesarias
+Render hace deploy automático cada vez que haces push:
+
+```bash
+git add .
+git commit -m "feat: nueva funcionalidad"
+git push origin main
+# ✅ Render detecta el push y hace deploy automático
+```
+
+### 🔑 Variables de Entorno (Producción)
 
 ```env
-# Railway auto-configura estas variables cuando agregas MySQL:
-DB_HOST=<auto-configurado-por-railway>
-DB_NAME=<auto-configurado-por-railway>
-DB_USER=<auto-configurado-por-railway>
-DB_PASS=<auto-configurado-por-railway>
+# Clever Cloud MySQL (configurar manualmente)
+DB_HOST=bmxxxxxxxx-mysql.services.clever-cloud.com
+DB_NAME=bmxxxxxxxx
+DB_USER=uxxxxxxxx
+DB_PASS=xxxxxxxxxxxx
 DB_PORT=3306
 
-# Variables que DEBES configurar manualmente:
+# Application (configurar manualmente)
 API_KEY=<genera-con: openssl rand -hex 32>
 APP_ENV=production
 APP_DEBUG=false
 PAYMENT_SUCCESS_RATE=1.0
 ```
 
-**⚠️ Importante:**
-- Railway configura automáticamente las credenciales de MySQL
-- Solo necesitas configurar `API_KEY`, `APP_ENV`, `APP_DEBUG` y `PAYMENT_SUCCESS_RATE`
-- Genera API Key segura: `openssl rand -hex 32`
-- Railway usa HTTPS automáticamente en producción ✅
+**Generar API Key segura:**
+```bash
+openssl rand -hex 32
+```
+
+### 📊 Monitoreo y Logs
+
+**Render Dashboard:**
+- 📈 Métricas de uso (CPU, RAM, requests)
+- 📝 Logs en tiempo real
+- 🔄 Historial de deploys
+- ⚡ Health checks automáticos
+
+**Clever Cloud Dashboard:**
+- 💾 Espacio usado
+- 📊 Métricas de conexiones
+- 🔍 Logs de MySQL
+- 🛠️ phpMyAdmin integrado
+
+### 🆘 Troubleshooting
+
+**El servicio tarda en responder:**
+- El plan básico de Render se duerme después de 15 min sin actividad
+- Primera request tarda ~30 segundos al despertar
+- Requests posteriores son instantáneas
+
+**Error de conexión a base de datos:**
+- Verificar credenciales de Clever Cloud en Render
+- Ver logs en Render Dashboard → tu servicio → Logs
+- Verificar que el addon MySQL esté activo en Clever Cloud
+
+**Ver guía completa de troubleshooting:** [DEPLOY.md - Troubleshooting](DEPLOY.md#-troubleshooting)
 
 ## 📚 Documentación Adicional
 
-- **[SETUP.md](SETUP.md)** - Guía de instalación paso a paso
-- **[FEATURES.md](FEATURES.md)** - Características detalladas
-- **[DOCUMENTATION.md](DOCUMENTATION.md)** - Documentación técnica completa
-- **[CHANGELOG.md](CHANGELOG.md)** - Historial de cambios
+- **[DEPLOY.md](DEPLOY.md)** - **🚀 Guía completa de deploy (Render + Clever Cloud)**
+- **[SETUP.md](SETUP.md)** - Guía de instalación local paso a paso
+- **[FEATURES.md](FEATURES.md)** - Características y funcionalidades detalladas
+- **[DOCUMENTATION.md](DOCUMENTATION.md)** - Documentación técnica de arquitectura
+- **[CHANGELOG.md](CHANGELOG.md)** - Historial de versiones y cambios
 - **[VALIDACION_REQUERIMIENTOS.md](VALIDACION_REQUERIMIENTOS.md)** - Validación contra requisitos
 
 ## 🛠️ Scripts Disponibles
