@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Balance API - Interfaz de Prueba</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+        }
+
+        .api-key-section {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .api-key-section input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: monospace;
+            margin-top: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .response {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            display: none;
+        }
+
+        .response.show {
+            display: block;
+        }
+
+        .response pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .response.success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .response.error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .status-badge.ok {
+            background: #28a745;
+            color: white;
+        }
+
+        .status-badge.error {
+            background: #dc3545;
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Virtual Balance API - Interfaz de Prueba</h1>
+            <p>Prueba todos los endpoints de la API desde tu navegador</p>
+        </div>
+
+        <div class="api-key-section">
+            <strong>⚠️ API Key:</strong>
+            <input type="text" id="globalApiKey" value="dev_api_key_12345" placeholder="Ingresa tu API Key">
+            <small style="display: block; margin-top: 5px; color: #856404;">
+                Esta clave se incluirá automáticamente en todas las peticiones
+            </small>
+        </div>
+
+        <div class="grid">
+            <!-- Health Check -->
+            <div class="card">
+                <h2>🏥 Health Check</h2>
+                <p style="color: #666; margin-bottom: 15px;">Verifica el estado de la API y la base de datos</p>
+                <button onclick="checkHealth()">Verificar Estado</button>
+                <div id="healthResponse" class="response"></div>
+            </div>
+
+            <!-- Registrar Usuario -->
+            <div class="card">
+                <h2>👤 Registrar Usuario</h2>
+                <form onsubmit="registerUser(event)">
+                    <div class="form-group">
+                        <label>Documento:</label>
+                        <input type="text" id="regDocument" value="1234567890" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre:</label>
+                        <input type="text" id="regName" value="Juan Pérez" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="regEmail" value="juan@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono:</label>
+                        <input type="text" id="regPhone" value="3001234567" required>
+                    </div>
+                    <button type="submit">Registrar</button>
+                </form>
+                <div id="registerResponse" class="response"></div>
+            </div>
+
+            <!-- Consultar Saldo -->
+            <div class="card">
+                <h2>💰 Consultar Saldo</h2>
+                <form onsubmit="checkBalance(event)">
+                    <div class="form-group">
+                        <label>Documento:</label>
+                        <input type="text" id="balanceDocument" value="1234567890" required>
+                    </div>
+                    <button type="submit">Consultar</button>
+                </form>
+                <div id="balanceResponse" class="response"></div>
+            </div>
+
+            <!-- Recargar Billetera -->
+            <div class="card">
+                <h2>💳 Recargar Billetera</h2>
+                <form onsubmit="rechargeWallet(event)">
+                    <div class="form-group">
+                        <label>Documento:</label>
+                        <input type="text" id="rechargeDocument" value="1234567890" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono:</label>
+                        <input type="text" id="rechargePhone" value="3001234567" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Monto:</label>
+                        <input type="number" id="rechargeAmount" value="10000" min="1000" step="1000" required>
+                    </div>
+                    <button type="submit">Iniciar Recarga</button>
+                </form>
+                <div id="rechargeResponse" class="response"></div>
+            </div>
+
+            <!-- Hacer Pago -->
+            <div class="card">
+                <h2>💸 Hacer Pago</h2>
+                <form onsubmit="makePayment(event)">
+                    <div class="form-group">
+                        <label>Documento:</label>
+                        <input type="text" id="paymentDocument" value="1234567890" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Monto:</label>
+                        <input type="number" id="paymentAmount" value="5000" min="100" step="100" required>
+                    </div>
+                    <button type="submit">Realizar Pago</button>
+                </form>
+                <div id="paymentResponse" class="response"></div>
+            </div>
+
+            <!-- Confirmar Pago -->
+            <div class="card">
+                <h2>✅ Confirmar Recarga</h2>
+                <p style="color: #666; font-size: 13px; margin-bottom: 15px;">
+                    Copia el token y sessionId de la recarga anterior
+                </p>
+                <form onsubmit="confirmPayment(event)">
+                    <div class="form-group">
+                        <label>Session ID:</label>
+                        <input type="text" id="confirmSession" placeholder="sess_..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>Token:</label>
+                        <input type="text" id="confirmToken" placeholder="tok_..." required>
+                    </div>
+                    <button type="submit">Confirmar</button>
+                </form>
+                <div id="confirmResponse" class="response"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api';
+
+        function getApiKey() {
+            return document.getElementById('globalApiKey').value;
+        }
+
+        function showResponse(elementId, data, isSuccess = true) {
+            const element = document.getElementById(elementId);
+            element.className = `response show ${isSuccess ? 'success' : 'error'}`;
+            element.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        }
+
+        async function checkHealth() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                showResponse('healthResponse', data, response.ok);
+            } catch (error) {
+                showResponse('healthResponse', { error: error.message }, false);
+            }
+        }
+
+        async function registerUser(event) {
+            event.preventDefault();
+            try {
+                const data = {
+                    document: document.getElementById('regDocument').value,
+                    name: document.getElementById('regName').value,
+                    email: document.getElementById('regEmail').value,
+                    phone: document.getElementById('regPhone').value
+                };
+
+                const response = await fetch(`${API_BASE}/users/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': getApiKey()
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                showResponse('registerResponse', result, response.ok);
+            } catch (error) {
+                showResponse('registerResponse', { error: error.message }, false);
+            }
+        }
+
+        async function checkBalance(event) {
+            event.preventDefault();
+            try {
+                const document = document.getElementById('balanceDocument').value;
+                const response = await fetch(`${API_BASE}/users/${document}/balance`, {
+                    headers: {
+                        'X-API-Key': getApiKey()
+                    }
+                });
+
+                const data = await response.json();
+                showResponse('balanceResponse', data, response.ok);
+            } catch (error) {
+                showResponse('balanceResponse', { error: error.message }, false);
+            }
+        }
+
+        async function rechargeWallet(event) {
+            event.preventDefault();
+            try {
+                const data = {
+                    document: document.getElementById('rechargeDocument').value,
+                    phone: document.getElementById('rechargePhone').value,
+                    amount: parseFloat(document.getElementById('rechargeAmount').value)
+                };
+
+                const response = await fetch(`${API_BASE}/transactions/recharge`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': getApiKey()
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                showResponse('rechargeResponse', result, response.ok);
+
+                // Auto-fill confirm form
+                if (result.success && result.data) {
+                    document.getElementById('confirmSession').value = result.data.sessionId || '';
+                    document.getElementById('confirmToken').value = result.data.token || '';
+                }
+            } catch (error) {
+                showResponse('rechargeResponse', { error: error.message }, false);
+            }
+        }
+
+        async function makePayment(event) {
+            event.preventDefault();
+            try {
+                const data = {
+                    document: document.getElementById('paymentDocument').value,
+                    amount: parseFloat(document.getElementById('paymentAmount').value)
+                };
+
+                const response = await fetch(`${API_BASE}/transactions/payment`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': getApiKey()
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                showResponse('paymentResponse', result, response.ok);
+            } catch (error) {
+                showResponse('paymentResponse', { error: error.message }, false);
+            }
+        }
+
+        async function confirmPayment(event) {
+            event.preventDefault();
+            try {
+                const data = {
+                    sessionId: document.getElementById('confirmSession').value,
+                    token: document.getElementById('confirmToken').value
+                };
+
+                const response = await fetch(`${API_BASE}/transactions/confirm`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': getApiKey()
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                showResponse('confirmResponse', result, response.ok);
+            } catch (error) {
+                showResponse('confirmResponse', { error: error.message }, false);
+            }
+        }
+
+        // Auto-check health on load
+        window.addEventListener('load', () => {
+            checkHealth();
+        });
+    </script>
+</body>
+
+</html>
