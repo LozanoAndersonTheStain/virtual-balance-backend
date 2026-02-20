@@ -1,0 +1,38 @@
+{
+  "name": "lozanothestain/virtual-balance-backend",
+  "description": "Sistema de gestión integral de saldos virtuales",
+  "type": "project",
+  "authors": [
+    {
+      "name": "Anderson Lozano",
+      "email": "adslozanov@gmail.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+    "php": "^8.0",
+    "slim/slim": "4.*",
+    "slim/psr7": "^1.8",
+    "php-di/php-di": "^7.1",
+    "vlucas/phpdotenv": "^5.6",
+    "monolog/monolog": "^3.10"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "VirtualBalance\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "VirtualBalance\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "start": "php -S localhost:8000 -t public",
+    "test": "phpunit",
+    "dump": "composer dump-autoload"
+  }
+}
