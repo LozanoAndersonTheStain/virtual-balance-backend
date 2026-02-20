@@ -6,6 +6,11 @@
 .env.local
 .env.*.local
 
+# Credenciales (no subir a GitHub)
+CREDENCIALES_RENDER.txt
+credentials.txt
+*.credentials
+
 # Logs
 /logs/*.log
 /logs/*
@@ -47,3 +52,5 @@ desktop.ini
 *.swp
 *~
 .*.swp
+
+/files
