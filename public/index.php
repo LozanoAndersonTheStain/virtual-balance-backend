@@ -25,14 +25,14 @@ $dependencies($container);
 AppFactory::setContainer($container);
 $app = AppFactory::create();
 
-// Agregar CORS Middleware (primero para que se ejecute en todas las rutas)
-$app->add(CorsMiddleware::class);
-
 // Agregar middleware de parsing del body
 $app->addBodyParsingMiddleware();
 
 // Agregar middleware de routing
 $app->addRoutingMiddleware();
+
+// Agregar CORS Middleware DESPUÉS del routing para que se ejecute ANTES
+$app->add(CorsMiddleware::class);
 
 // Configurar error middleware
 $displayErrorDetails = ($_ENV['APP_DEBUG'] ?? 'false') === 'true';
@@ -40,11 +40,6 @@ $logErrors = true;
 $logErrorDetails = true;
 
 $errorMiddleware = $app->addErrorMiddleware($displayErrorDetails, $logErrors, $logErrorDetails);
-
-// Manejar opciones preflight (CORS)
-$app->options('/{routes:.+}', function ($request, $response) {
-    return $response;
-});
 
 // Cargar rutas
 $routes = require __DIR__ . '/../src/Infrastructure/Http/Routes/api.php';
