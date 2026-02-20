@@ -195,7 +195,9 @@
 
         <div class="api-key-section">
             <strong>⚠️ API Key:</strong>
-            <input type="text" id="globalApiKey" value="3d1ae36128db9f079fd5f0b4af05ba16ee7bfbea94343623ef2055cf2272ccfe" placeholder="Ingresa tu API Key">
+            <input type="text" id="globalApiKey"
+                value="3d1ae36128db9f079fd5f0b4af05ba16ee7bfbea94343623ef2055cf2272ccfe"
+                placeholder="Ingresa tu API Key">
             <small style="display: block; margin-top: 5px; color: #856404;">
                 Esta clave se incluirá automáticamente en todas las peticiones
             </small>
@@ -360,8 +362,8 @@
         async function checkBalance(event) {
             event.preventDefault();
             try {
-                const document = document.getElementById('balanceDocument').value;
-                const response = await fetch(`${API_BASE}/users/${document}/balance`, {
+                const balanceDocument = document.getElementById('balanceDocument').value;
+                const response = await fetch(`${API_BASE}/users/${balanceDocument}/balance`, {
                     headers: {
                         'X-API-Key': getApiKey()
                     }
