@@ -27,6 +27,12 @@ return function (App $app) {
             $txGroup->post('/confirm', [TransactionController::class, 'confirm']);
         });
 
+        // Rutas de notificaciones (Webhooks)
+        $group->group('/notifications', function (RouteCollectorProxy $notifGroup) {
+            // Webhook para confirmación de pagos desde pasarelas externas
+            $notifGroup->post('/payment', [TransactionController::class, 'notifyPayment']);
+        });
+
     })->add(ApiKeyAuthMiddleware::class);
 
     // Ruta raíz
