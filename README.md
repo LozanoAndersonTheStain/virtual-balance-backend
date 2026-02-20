@@ -283,6 +283,7 @@ X-API-Key: dev_api_key_12345
 | POST | `/api/transactions/recharge` | Iniciar recarga de saldo | ✅ Sí |
 | POST | `/api/transactions/confirm` | Confirmar recarga pendiente | ✅ Sí |
 | POST | `/api/transactions/payment` | Realizar pago | ✅ Sí |
+| POST | `/api/notifications/payment` | **Webhook para notificaciones de pago** | ✅ Sí |
 
 ### 📘 Ejemplos de Uso
 
@@ -425,7 +426,52 @@ curl -X POST http://localhost:8000/api/transactions/confirm \
 }
 ```
 
-#### 6. Realizar Pago
+#### 6. Webhook de Notificaciones (Pasarelas Externas)
+
+> 📡 **Uso:** Este endpoint está diseñado para que pasarelas de pago externas (PSE, Nequi, Bancolombia, etc.) notifiquen confirmaciones de pago.
+
+```bash
+curl -X POST http://localhost:8000/api/notifications/payment \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: dev_api_key_12345" \
+  -d '{
+    "token": "tok_507f1f77bcf86cd799439011",
+    "sessionId": "sess_507f191e810c19729de860ea"
+  }'
+```
+
+**Respuesta 200 OK (Pago Confirmado):**
+```json
+{
+  "success": true,
+  "message": "Notificación de pago recibida y procesada exitosamente. Saldo actualizado.",
+  "data": {
+    "transaction_id": 1,
+    "status": "COMPLETED",
+    "amount": 50000,
+    "new_balance": 50000
+  }
+}
+```
+
+**Respuesta 400 Bad Request (Pago Fallido):**
+```json
+{
+  "success": false,
+  "message": "Notificación recibida. La transacción fue marcada como fallida.",
+  "data": {
+    "transaction_id": 1,
+    "status": "FAILED",
+    "amount": 50000
+  }
+}
+```
+
+**🔑 Diferencia entre `/confirm` y `/notifications/payment`:**
+- **`/api/transactions/confirm`**: Endpoint genérico para confirmar transacciones (puede ser llamado por cliente)
+- **`/api/notifications/payment`**: Webhook específico para pasarelas externas, con logging detallado y auditoría
+
+#### 7. Realizar Pago
 
 ```bash
 curl -X POST http://localhost:8000/api/transactions/payment \
@@ -662,6 +708,7 @@ openssl rand -hex 32
 
 - **[DEPLOY.md](DEPLOY.md)** - **🚀 Guía completa de deploy (Render + Clever Cloud)**
 - **[SETUP.md](SETUP.md)** - Guía de instalación local paso a paso
+- **[WEBHOOKS.md](WEBHOOKS.md)** - **🔔 Documentación de webhooks para pasarelas de pago**
 - **[FEATURES.md](FEATURES.md)** - Características y funcionalidades detalladas
 - **[DOCUMENTATION.md](DOCUMENTATION.md)** - Documentación técnica de arquitectura
 - **[CHANGELOG.md](CHANGELOG.md)** - Historial de versiones y cambios
