@@ -151,6 +151,52 @@
 
 ---
 
+### 6. ✅ Sistema de Notificaciones de Pago
+
+**Requerimiento:** API RESTful para recibir notificaciones de confirmación de pagos desde pasarelas externas.
+
+**Implementación:**
+- ✅ **Endpoint Webhook:** `POST /api/notifications/payment`
+- ✅ **Propósito:** 
+  - Recibir notificaciones de pasarelas de pago externas (PSE, Nequi, Bancolombia, etc.)
+  - Procesar confirmaciones de transacciones pendientes
+  - Actualizar saldos en tiempo real
+  - Mantener estado actualizado de transacciones
+- ✅ **Funcionalidades:**
+  - Recibe token y sessionId de transacción
+  - Valida autenticación mediante API Key
+  - Actualiza estado de transacción (PENDING → COMPLETED/FAILED)
+  - Acredita saldo en tiempo real si es exitosa
+  - Logging detallado para auditoría
+  - Registra User-Agent de la fuente (trazabilidad)
+- ✅ **Parámetros:**
+  - `token` (string): Token único de la transacción
+  - `sessionId` (string): ID de sesión de la transacción
+- ✅ **Respuestas:**
+  - 200 OK: Notificación procesada exitosamente
+  - 400 Bad Request: Transacción marcada como fallida
+  - 404 Not Found: Token/SessionId inválido
+  - 401 Unauthorized: API Key inválida
+- ✅ **Seguridad:**
+  - Autenticación obligatoria con API Key
+  - Validación de datos de entrada
+  - Logging de todas las notificaciones recibidas
+  - Prevención de procesamiento duplicado
+- ✅ **Código:**
+  - Controller: `TransactionController::notifyPayment()`
+  - UseCase: `ConfirmPaymentUseCase.php` (reutilizado)
+  - Request: `ConfirmPaymentRequest.php`
+  - Route: `/api/notifications/payment`
+
+**Diferencia con `/api/transactions/confirm`:**
+- El endpoint `/confirm` es genérico y puede ser usado por clientes
+- El endpoint `/notifications/payment` está diseñado específicamente para webhooks de pasarelas
+- Ambos usan el mismo UseCase pero con logging y contexto diferenciado
+
+**Estado:** ✅ COMPLETO
+
+---
+
 ## 🏗️ REQUERIMIENTOS TÉCNICOS
 
 ### 1. ✅ Arquitectura y Estructura
@@ -244,6 +290,7 @@
   | POST | `/api/transactions/recharge` | Iniciar recarga | ✓ |
   | POST | `/api/transactions/payment` | Realizar pago | ✓ |
   | POST | `/api/transactions/confirm` | Confirmar transacción | ✓ |
+  | POST | `/api/notifications/payment` | **Webhook notificaciones de pago** | ✓ |
 
 - ✅ **Formato de Respuestas:**
   ```json
