@@ -2,25 +2,26 @@
 
 namespace VirtualBalance\Application\UseCases\RechargeWallet;
 
+use InvalidArgumentException;
+use VirtualBalance\Application\DTOs\PaymentResponseDTO;
+use VirtualBalance\Application\UseCases\Notification\CreateNotificationUseCase;
 use VirtualBalance\Domain\Entities\Transaction;
-use VirtualBalance\Domain\ValueObjects\Balance;
-use VirtualBalance\Domain\ValueObjects\TransactionStatus;
-use VirtualBalance\Domain\Repositories\UserRepositoryInterface;
-use VirtualBalance\Domain\Repositories\WalletRepositoryInterface;
-use VirtualBalance\Domain\Repositories\TransactionRepositoryInterface;
 use VirtualBalance\Domain\Exceptions\UserNotFoundException;
 use VirtualBalance\Domain\Exceptions\WalletNotFoundException;
-use VirtualBalance\Application\DTOs\PaymentResponseDTO;
-use InvalidArgumentException;
+use VirtualBalance\Domain\Repositories\TransactionRepositoryInterface;
+use VirtualBalance\Domain\Repositories\UserRepositoryInterface;
+use VirtualBalance\Domain\Repositories\WalletRepositoryInterface;
+use VirtualBalance\Domain\ValueObjects\Balance;
+use VirtualBalance\Domain\ValueObjects\TransactionStatus;
 
 class RechargeWalletUseCase
 {
     public function __construct(
         private UserRepositoryInterface $userRepository,
         private WalletRepositoryInterface $walletRepository,
-        private TransactionRepositoryInterface $transactionRepository
-    ) {
-    }
+        private TransactionRepositoryInterface $transactionRepository,
+        private CreateNotificationUseCase $createNotificationUseCase
+    ) {}
 
     /**
      * Inicia una recarga de billetera (crea transacción pendiente)
@@ -50,6 +51,13 @@ class RechargeWalletUseCase
         if (!$wallet) {
             throw new WalletNotFoundException($user->getId());
         }
+
+        // Enviar notificación de recarga iniciada al usuario correcto
+        $this->createNotificationUseCase->execute(
+            $user->getId(),
+            'Recarga iniciada',
+            'Tu recarga de $' . number_format($request->amount, 2) . ' está pendiente de validación.'
+        );
 
         // Crear transacción pendiente
         $transaction = new Transaction(
