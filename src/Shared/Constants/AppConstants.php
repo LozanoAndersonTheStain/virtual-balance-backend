@@ -16,7 +16,7 @@ class AppConstants
     // Limits
     public const MAX_RECHARGE_AMOUNT = 1000000; // 1 millón
     public const MAX_PAYMENT_AMOUNT = 500000;   // 500 mil
-    public const MIN_TRANSACTION_AMOUNT = 1;
+    public const MIN_TRANSACTION_AMOUNT = 10000;   // 10 mil
 
     // Response Codes
     public const HTTP_OK = 200;
