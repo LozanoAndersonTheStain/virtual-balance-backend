@@ -212,6 +212,19 @@
                 <div id="healthResponse" class="response"></div>
             </div>
 
+            <!-- Consultar Notificaciones -->
+            <div class="card">
+                <h2>🔔 Consultar Notificaciones</h2>
+                <form onsubmit="getNotifications(event)">
+                    <div class="form-group">
+                        <label>Documento:</label>
+                        <input type="text" id="notificationsDocument" value="1234567890" required>
+                    </div>
+                    <button type="submit">Consultar Notificaciones</button>
+                </form>
+                <div id="notificationsResponse" class="response"></div>
+            </div>
+
             <!-- Registrar Usuario -->
             <div class="card">
                 <h2>👤 Registrar Usuario</h2>
@@ -459,6 +472,43 @@
         window.addEventListener('load', () => {
             checkHealth();
         });
+
+        async function getNotifications(event) {
+            event.preventDefault();
+            try {
+                const notificationsDocument = document.getElementById('notificationsDocument').value;
+                const response = await fetch(`${API_BASE}/users/${notificationsDocument}/notifications`, {
+                    headers: {
+                        'X-API-Key': getApiKey()
+                    }
+                });
+                const data = await response.json();
+                // Formatear notificaciones si existen
+                if (response.ok && Array.isArray(data)) {
+                    let html = '<h3>Notificaciones</h3>';
+                    if (data.length === 0) {
+                        html += '<p>No hay notificaciones.</p>';
+                    } else {
+                        html += '<ul style="list-style:none;padding-left:0">';
+                        data.forEach(n => {
+                            html += `<li style="margin-bottom:15px;padding:10px;border-left:4px solid ${n.is_read ? '#28a745' : '#ffc107'};background:#f8f9fa;border-radius:5px;">
+                                    <strong>${n.title}</strong><br>
+                                    <span style="color:#555">${n.message}</span><br>
+                                    <small style="color:#888">${n.timestamp || n.created_at}</small><br>
+                                    <span class="status-badge ${n.is_read ? 'ok' : 'error'}">${n.is_read ? 'Leída' : 'No leída'}</span>
+                                </li>`;
+                        });
+                        html += '</ul>';
+                    }
+                    document.getElementById('notificationsResponse').className = 'response show success';
+                    document.getElementById('notificationsResponse').innerHTML = html;
+                } else {
+                    showResponse('notificationsResponse', data, response.ok);
+                }
+            } catch (error) {
+                showResponse('notificationsResponse', { error: error.message }, false);
+            }
+        }
     </script>
 </body>
 
