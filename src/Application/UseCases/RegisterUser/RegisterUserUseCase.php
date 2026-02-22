@@ -2,21 +2,23 @@
 
 namespace VirtualBalance\Application\UseCases\RegisterUser;
 
+use InvalidArgumentException;
+use VirtualBalance\Application\DTOs\UserDTO;
+use VirtualBalance\Application\UseCases\Notification\CreateNotificationUseCase;
 use VirtualBalance\Domain\Entities\User;
 use VirtualBalance\Domain\Entities\Wallet;
-use VirtualBalance\Domain\ValueObjects\Email;
-use VirtualBalance\Domain\ValueObjects\Balance;
+use VirtualBalance\Domain\Exceptions\DuplicateUserException;
 use VirtualBalance\Domain\Repositories\UserRepositoryInterface;
 use VirtualBalance\Domain\Repositories\WalletRepositoryInterface;
-use VirtualBalance\Domain\Exceptions\DuplicateUserException;
-use VirtualBalance\Application\DTOs\UserDTO;
-use InvalidArgumentException;
+use VirtualBalance\Domain\ValueObjects\Balance;
+use VirtualBalance\Domain\ValueObjects\Email;
 
 class RegisterUserUseCase
 {
     public function __construct(
         private UserRepositoryInterface $userRepository,
-        private WalletRepositoryInterface $walletRepository
+        private WalletRepositoryInterface $walletRepository,
+        private CreateNotificationUseCase $createNotificationUseCase
     ) {
     }
 
@@ -64,6 +66,13 @@ class RegisterUserUseCase
         );
 
         $this->walletRepository->save($wallet);
+
+        // Enviar notificación de registro
+        $this->createNotificationUseCase->execute(
+            $savedUser->getId(),
+            'Usuario registrado',
+            'Bienvenido a VirtualBalance. Tu cuenta ha sido creada exitosamente.'
+        );
 
         // Retornar DTO
         return new UserDTO(
