@@ -12,6 +12,7 @@ use VirtualBalance\Domain\Exceptions\UserNotFoundException;
 use VirtualBalance\Domain\Exceptions\WalletNotFoundException;
 use VirtualBalance\Domain\Exceptions\InsufficientBalanceException;
 use VirtualBalance\Application\DTOs\PaymentResponseDTO;
+use VirtualBalance\Application\UseCases\Notification\CreateNotificationUseCase;
 use InvalidArgumentException;
 
 class MakePaymentUseCase
@@ -19,13 +20,13 @@ class MakePaymentUseCase
     public function __construct(
         private UserRepositoryInterface $userRepository,
         private WalletRepositoryInterface $walletRepository,
-        private TransactionRepositoryInterface $transactionRepository
+        private TransactionRepositoryInterface $transactionRepository,
+        private CreateNotificationUseCase $createNotificationUseCase
     ) {
     }
 
     /**
      * Realiza un pago descontando el saldo de la billetera
-     * 
      * @param MakePaymentRequest $request
      * @return PaymentResponseDTO
      * @throws UserNotFoundException
@@ -76,6 +77,13 @@ class MakePaymentUseCase
 
         // Guardar transacción
         $savedTransaction = $this->transactionRepository->save($transaction);
+
+        // Enviar notificación
+        $this->createNotificationUseCase->execute(
+            $user->getId(),
+            'Pago realizado',
+            'Tu pago de $' . number_format($request->amount, 2) . ' fue exitoso.'
+        );
 
         // Generar token de confirmación
         $sessionId = $this->generateSessionId();
