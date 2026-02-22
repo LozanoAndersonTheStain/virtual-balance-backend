@@ -5,6 +5,7 @@ use Slim\Routing\RouteCollectorProxy;
 use VirtualBalance\Infrastructure\Http\Controllers\HealthController;
 use VirtualBalance\Infrastructure\Http\Controllers\UserController;
 use VirtualBalance\Infrastructure\Http\Controllers\TransactionController;
+use VirtualBalance\Infrastructure\Http\Controllers\NotificationController;
 use VirtualBalance\Infrastructure\Http\Middleware\ApiKeyAuthMiddleware;
 
 return function (App $app) {
@@ -13,11 +14,14 @@ return function (App $app) {
 
     // Grupo de rutas API protegidas con API Key
     $app->group('/api', function (RouteCollectorProxy $group) {
-        
+
         // Rutas de usuarios
         $group->group('/users', function (RouteCollectorProxy $userGroup) {
             $userGroup->post('/register', [UserController::class, 'register']);
             $userGroup->get('/{document}/balance', [UserController::class, 'getBalance']);
+            $userGroup->get('/{document}/notifications', [NotificationController::class, 'getNotifications']);
+            $userGroup->post('/{document}/notifications/mark-read', [NotificationController::class, 'markNotificationsAsRead']);
+            $userGroup->post('/{document}/notifications/delete', [NotificationController::class, 'deleteNotifications']);
         });
 
         // Rutas de transacciones
@@ -32,7 +36,6 @@ return function (App $app) {
             // Webhook para confirmación de pagos desde pasarelas externas
             $notifGroup->post('/payment', [TransactionController::class, 'notifyPayment']);
         });
-
     })->add(ApiKeyAuthMiddleware::class);
 
     // Ruta raíz
